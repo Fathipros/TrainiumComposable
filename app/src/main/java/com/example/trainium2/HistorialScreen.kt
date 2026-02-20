@@ -51,8 +51,8 @@ fun HistorialScreen(idUsuario: Int, onBack: () -> Unit) {
             try {
                 val conn = DatabaseAdmin.connection(); val tmp = mutableListOf<Pago>()
                 if (conn != null) {
-                    val rs = conn.prepareStatement("SELECT ID, tipo, monto, fecha_pago FROM PAGOS WHERE id_usuario = ? ORDER BY fecha_pago DESC").apply { setInt(1, idUsuario) }.executeQuery()
-                    while (rs.next()) tmp.add(Pago(rs.getInt("ID"), rs.getString("tipo") ?: "", rs.getDouble("monto"), rs.getString("fecha_pago") ?: ""))
+                    val rs = conn.prepareStatement("SELECT ID, CONCEPTO, MONTO, FECHA FROM PAGOS WHERE ID_USUARIO = ? ORDER BY FECHA DESC").apply { setInt(1, idUsuario) }.executeQuery()
+                    while (rs.next()) tmp.add(Pago(rs.getInt("ID"), rs.getString("CONCEPTO") ?: "", rs.getDouble("MONTO"), rs.getString("FECHA") ?: ""))
                     conn.close()
                 } else { withContext(Dispatchers.Main) { errorConexion = true } }
                 withContext(Dispatchers.Main) { pagos = tmp; cargando = false; delay(80); headerVisible = true; delay(150); summaryVisible = true }

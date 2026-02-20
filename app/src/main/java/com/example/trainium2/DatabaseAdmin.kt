@@ -7,7 +7,7 @@ import java.util.Properties
 
 object DatabaseAdmin {
     private const val TAG = "DatabaseAdmin"
-    private const val url = "jdbc:mysql://db4free.net:3306/proyectogimnasio?useSSL=false&serverTimezone=UTC&connectTimeout=8000&socketTimeout=15000"
+    private const val url = "jdbc:mysql://db4free.net:3306/proyectogimnasio?useSSL=false&serverTimezone=UTC&connectTimeout=30000&socketTimeout=30000"
     private const val user = "proyectogimnasio"
     private const val pass = "proyectogimnasio"
 
@@ -17,8 +17,8 @@ object DatabaseAdmin {
             val props = Properties()
             props.setProperty("user", user)
             props.setProperty("password", pass)
-            props.setProperty("connectTimeout", "5000")
-            props.setProperty("socketTimeout", "10000")
+            props.setProperty("connectTimeout", "30000")
+            props.setProperty("socketTimeout", "30000")
             val conn = DriverManager.getConnection(url, props)
             Log.d(TAG, "Conexión establecida correctamente")
             conn

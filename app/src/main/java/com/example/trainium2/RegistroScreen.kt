@@ -65,8 +65,8 @@ fun RegistroScreen(idUsuario: Int, onBack: () -> Unit) {
                 val conn = DatabaseAdmin.connection()
                 val tmp = mutableListOf<PesoRegistro>()
                 if (conn != null) {
-                    val rs = conn.prepareStatement("SELECT ID, PESO, FECHA_REGISTRO FROM PESO_USUARIO WHERE ID_USUARIO = ? ORDER BY FECHA_REGISTRO DESC").apply { setInt(1, idUsuario) }.executeQuery()
-                    while (rs.next()) tmp.add(PesoRegistro(rs.getInt("ID"), rs.getDouble("PESO"), rs.getString("FECHA_REGISTRO") ?: ""))
+                    val rs = conn.prepareStatement("SELECT ID, PESO, FECHA FROM REGISTRO_PESO WHERE ID_USUARIO = ? ORDER BY FECHA DESC").apply { setInt(1, idUsuario) }.executeQuery()
+                    while (rs.next()) tmp.add(PesoRegistro(rs.getInt("ID"), rs.getDouble("PESO"), rs.getString("FECHA") ?: ""))
                     conn.close()
                 } else { withContext(Dispatchers.Main) { errorConexion = true } }
                 withContext(Dispatchers.Main) { registros = tmp; cargando = false; delay(80); headerVisible = true; delay(120); inputVisible = true }
@@ -121,7 +121,7 @@ fun RegistroScreen(idUsuario: Int, onBack: () -> Unit) {
                                         val conn = DatabaseAdmin.connection()
                                         if (conn != null) {
                                             val hoy = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                                            conn.prepareStatement("INSERT INTO PESO_USUARIO (ID_USUARIO, PESO, FECHA_REGISTRO) VALUES (?, ?, ?)").apply { setInt(1, idUsuario); setDouble(2, pesoVal); setString(3, hoy); executeUpdate() }
+                                            conn.prepareStatement("INSERT INTO REGISTRO_PESO (ID_USUARIO, PESO, FECHA) VALUES (?, ?, ?)").apply { setInt(1, idUsuario); setDouble(2, pesoVal); setString(3, hoy); executeUpdate() }
                                             conn.close()
                                             withContext(Dispatchers.Main) { pesoCampo = ""; Toast.makeText(context, "✅ Peso registrado", Toast.LENGTH_SHORT).show(); cargarDatos() }
                                         } else { withContext(Dispatchers.Main) { Toast.makeText(context, "Error de conexión", Toast.LENGTH_SHORT).show() } }
@@ -205,7 +205,7 @@ fun RegistroScreen(idUsuario: Int, onBack: () -> Unit) {
                                 if (editandoId == reg.id) {
                                     TextButton(onClick = {
                                         val np = editandoPeso.replace(",", ".").toDoubleOrNull() ?: return@TextButton
-                                        scope.launch(Dispatchers.IO) { try { val conn = DatabaseAdmin.connection(); if (conn != null) { conn.prepareStatement("UPDATE PESO_USUARIO SET PESO = ? WHERE ID = ?").apply { setDouble(1, np); setInt(2, reg.id); executeUpdate() }; conn.close(); withContext(Dispatchers.Main) { editandoId = null; cargarDatos() } } } catch (e: Exception) { e.printStackTrace() } }
+                                        scope.launch(Dispatchers.IO) { try { val conn = DatabaseAdmin.connection(); if (conn != null) { conn.prepareStatement("UPDATE REGISTRO_PESO SET PESO = ? WHERE ID = ?").apply { setDouble(1, np); setInt(2, reg.id); executeUpdate() }; conn.close(); withContext(Dispatchers.Main) { editandoId = null; cargarDatos() } } } catch (e: Exception) { e.printStackTrace() } }
                                     }) { Text("✓", color = BlueAccent, fontWeight = FontWeight.Bold, fontSize = 18.sp) }
                                 } else {
                                     IconButton(onClick = { editandoId = reg.id; editandoPeso = reg.peso.toString() }, modifier = Modifier.size(32.dp)) {
@@ -213,7 +213,7 @@ fun RegistroScreen(idUsuario: Int, onBack: () -> Unit) {
                                     }
                                 }
                                 IconButton(onClick = {
-                                    scope.launch(Dispatchers.IO) { try { val conn = DatabaseAdmin.connection(); if (conn != null) { conn.prepareStatement("DELETE FROM PESO_USUARIO WHERE ID = ?").apply { setInt(1, reg.id); executeUpdate() }; conn.close(); withContext(Dispatchers.Main) { cargarDatos() } } } catch (e: Exception) { e.printStackTrace() } }
+                                    scope.launch(Dispatchers.IO) { try { val conn = DatabaseAdmin.connection(); if (conn != null) { conn.prepareStatement("DELETE FROM REGISTRO_PESO WHERE ID = ?").apply { setInt(1, reg.id); executeUpdate() }; conn.close(); withContext(Dispatchers.Main) { cargarDatos() } } } catch (e: Exception) { e.printStackTrace() } }
                                 }, modifier = Modifier.size(32.dp)) {
                                     Icon(Icons.Default.Delete, null, tint = Color(0xFFFF6B6B).copy(0.6f), modifier = Modifier.size(16.dp))
                                 }

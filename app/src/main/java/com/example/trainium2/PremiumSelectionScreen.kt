@@ -163,7 +163,7 @@ fun PremiumSelectionScreen(idUsuario: Int, onBack: () -> Unit, onSuccess: () -> 
                                 val monto = when (planSeleccionado) { "Mensual" -> 9.99; "Semestral" -> 49.99; else -> 89.99 }
                                 val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); val hoy = sdf.format(Date()); val cal = Calendar.getInstance().apply { add(Calendar.MONTH, meses) }; val fin = sdf.format(cal.time)
                                 conn.prepareStatement("UPDATE USUARIO SET PREMIUM = 1, FECHA_INI_PREM = ?, FECHA_FIN_PREM = ? WHERE ID = ?").apply { setString(1, hoy); setString(2, fin); setInt(3, idUsuario); executeUpdate() }
-                                conn.prepareStatement("INSERT INTO PAGOS (id_usuario, tipo, monto, fecha_pago) VALUES (?, ?, ?, ?)").apply { setInt(1, idUsuario); setString(2, "Premium $planSeleccionado"); setDouble(3, monto); setString(4, hoy); executeUpdate() }
+                                conn.prepareStatement("INSERT INTO PAGOS (ID_USUARIO, CONCEPTO, MONTO, FECHA) VALUES (?, ?, ?, ?)").apply { setInt(1, idUsuario); setString(2, "Premium $planSeleccionado"); setDouble(3, monto); setString(4, hoy); executeUpdate() }
                                 conn.close()
                                 withContext(Dispatchers.Main) { Toast.makeText(context, "🎉 ¡Bienvenido a Premium!", Toast.LENGTH_LONG).show(); onSuccess() }
                             } catch (e: Exception) { e.printStackTrace(); withContext(Dispatchers.Main) { Toast.makeText(context, "Error al procesar el pago", Toast.LENGTH_SHORT).show() } }

@@ -66,11 +66,11 @@ fun PlatosScreen(onBack: () -> Unit) {
             try {
                 val conn = DatabaseAdmin.connection()
                 if (conn != null) {
-                    val rs = conn.prepareStatement("SELECT * FROM PLATOS ORDER BY RAND() LIMIT 1").executeQuery()
+                    val rs = conn.prepareStatement("SELECT * FROM PLATO_DEL_DIA ORDER BY RAND() LIMIT 1").executeQuery()
                     if (rs.next()) {
                         nombre = rs.getString("NOMBRE") ?: ""; calorias = rs.getString("CALORIAS") ?: "0"
-                        proteinas = "0"; carbohidratos = "0"
-                        grasas = "0"; autor = rs.getString("DESCRIPCION") ?: ""
+                        proteinas = rs.getString("PROTEINAS") ?: "0"; carbohidratos = rs.getString("CARBOHIDRATOS") ?: "0"
+                        grasas = rs.getString("GRASAS") ?: "0"; autor = rs.getString("AUTOR") ?: ""
                     } else { withContext(Dispatchers.Main) { sinDatos = true } }
                     conn.close()
                 } else { withContext(Dispatchers.Main) { error = true } }
